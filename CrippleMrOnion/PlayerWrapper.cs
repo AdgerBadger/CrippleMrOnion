@@ -17,7 +17,7 @@ namespace CrippleMrOnion
     }
     public class PlayerWrapper
     {
-        public IController Controller { get; init;}
+        public IController Controller { get; init; }
         public Hand Hand = new();
         public int TriesTillInvalid = 3;
         public PlayerWrapper(IController controller)
@@ -28,11 +28,11 @@ namespace CrippleMrOnion
         public Card[] InitialDeal(IEnumerable<Card> cards)
         {
             Hand.AddRange(cards);
-            for(int triesLeft = TriesTillInvalid; triesLeft != 0;  triesLeft--)
+            for (int triesLeft = TriesTillInvalid; triesLeft != 0; triesLeft--)
             {
                 Card[] cardsToReplace = Controller.InitialDeal(cards);
                 bool valid = true;
-                for(int i = 0; i <  cardsToReplace.Length && valid; i++)
+                for (int i = 0; i < cardsToReplace.Length && valid; i++)
                 {
                     valid = Hand.Contains(cardsToReplace[i]);
                 }
@@ -55,13 +55,14 @@ namespace CrippleMrOnion
         public Move Turn(OwnedBoardState boardState)
         {
             Controller.NewTurn(boardState);
-            for(int triesLeft = TriesTillInvalid; triesLeft != 0; triesLeft--)
+            for (int triesLeft = TriesTillInvalid; triesLeft != 0; triesLeft--)
             {
                 Move turnAttempt = Controller.AttemptTurn();
                 if (turnAttempt.Type == MoveType.Fold)
                 {
                     return turnAttempt;
-                } else if(turnAttempt.Type == MoveType.Raise && turnAttempt.CardsInPlay!= null)
+                }
+                else if (turnAttempt.Type == MoveType.Raise && turnAttempt.CardsInPlay != null)
                 {
                     return turnAttempt;
                 }
@@ -76,8 +77,26 @@ namespace CrippleMrOnion
         {
             for (int triesLeft = TriesTillInvalid; triesLeft != 0; triesLeft--)
             {
-                Move? turnAttempt = Controller.AttemptTurn();
-                if (turnAttempt != null && turnAttempt.Type == MoveType.Interrupt)
+                Move? turnAttempt = Controller.OtherPlayTurn(playerNo, otherPlayerPlay);
+                if (
+                    turnAttempt != null &&
+                    otherPlayerPlay.Type == MoveType.Raise &&
+                    turnAttempt.Type == MoveType.Interrupt &&
+                    (
+                        (
+                            (
+                                otherPlayerPlay.CardsInPlay!.Type == GroupingType.LesserOnion ||
+                                otherPlayerPlay.CardsInPlay!.Type == GroupingType.GreaterOnion ||
+                                otherPlayerPlay.CardsInPlay!.Type == GroupingType.NineCardRunning
+                            ) &&
+                            turnAttempt.CardsInPlay!.Type != GroupingType.TenCardRunning
+                        ) ||
+                        (
+                            otherPlayerPlay.CardsInPlay!.Type == GroupingType.TenCardRunning &&
+                            turnAttempt.CardsInPlay!.Type != GroupingType.NineCardRunning
+                        )
+                    )
+                    )
                 {
                     return turnAttempt;
                 }
