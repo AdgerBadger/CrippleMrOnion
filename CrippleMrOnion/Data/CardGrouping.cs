@@ -260,6 +260,57 @@ namespace CrippleMrOnion.Data
             return _cards.Where(x => x.Suit == suit).ToList().Count;
         }
 
+        public bool CanAddTo(int target, int maxDepth = -1)
+        {
+            if(maxDepth == 0) return false;
+            for (int i = 0; i < _cards.Length; i++)
+            {
+                if (target - _cards[i].Value > 0)
+                {
+                    Card[] cardArr = new Card[_cards.Length];
+                    _cards.CopyTo(cardArr, 0);
+                    List<Card> list = cardArr.ToList();
+                    list.RemoveAt(i);
+                    bool addsWith = canAddTo(target - _cards[i].Value, list, maxDepth - 1);
+                    if (addsWith)
+                    {
+                        return true;
+                    }
+                }
+                else if (target - _cards[i].Value == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool canAddTo(int target, List<Card> currentCards, int maxDepth)
+        {
+            if (maxDepth == 0) return false;
+            for (int i = 0; i < currentCards.Count; i++)
+            {
+                if (target - currentCards[i].Value > 0)
+                {
+                    Card[] cardArr = new Card[currentCards.Count];
+                    _cards.CopyTo(cardArr, 0);
+                    List<Card> list = cardArr.ToList();
+                    list.RemoveAt(i);
+                    bool addsWith = canAddTo(target - _cards[i].Value, list, maxDepth - 1);
+                    if (addsWith)
+                    {
+                        return true;
+                    }
+                }
+                else if (target - _cards[i].Value == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
         public CardSuit MostFrequentSuit
         {
             get

@@ -35,6 +35,15 @@ namespace CrippleMrOnion.Data
             }
         }
 
+        public Card[] Pick(int no)
+        {
+            Card[] cards = new Card[no];
+            for(int i = 0; i < no; i++)
+            {
+                cards[i] = Pick();
+            }
+        }
+
         public void RemoveAt(int index)
         {
             _cards.RemoveAt(index);

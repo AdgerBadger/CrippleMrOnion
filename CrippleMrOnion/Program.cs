@@ -16,6 +16,10 @@ namespace CrippleMrOnion
 
             Debug.Draw(Console.BufferWidth - 25, 0, 25, -1);
 
+            Hand hand = new();
+            hand.Add(new Card(CardSuit.Swords, CardRank.Six));
+            hand.ToGraphic().Draw(14, 20);
+
             Debug.WriteLine("Awaiting user confirmation to exit...");
             Debug.Draw(Console.BufferWidth - 25, 0, 25, -1);
             Console.ReadKey(true);
