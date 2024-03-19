@@ -12,7 +12,7 @@ namespace CrippleMrOnion.States
         {
             return new StateTransition
             {
-                NextState = State.Play
+                NextState = State.Game
             };
         }
     }

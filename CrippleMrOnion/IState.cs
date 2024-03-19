@@ -9,14 +9,14 @@ namespace CrippleMrOnion
     public enum State
     {
         Menu,
-        Play,
+        Game,
         End
     }
 
-    public struct StateTransition
+    public abstract class StateTransition
     {
         public State NextState;
-
+        public State PreviousState;
     }
     public interface IState
     {
